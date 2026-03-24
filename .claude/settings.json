@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest portfolio --typescript --tailwind --app --no-src-dir --eslint --no-import-alias --use-npm)",
+      "Bash(npm install:*)",
+      "Bash(ls /c/Users/lucas/Desktop/VibeCoding/Resume4/*.png /c/Users/lucas/Desktop/VibeCoding/Resume4/*.jpg /c/Users/lucas/Desktop/VibeCoding/Resume4/*.jpeg /c/Users/lucas/Desktop/VibeCoding/Resume4/*.webp)",
+      "Bash(npx next:*)",
+      "Bash(ls -lh \"c:/Users/lucas/Desktop/VibeCoding/Resume4/LucasMoracaResume \\(1\\).pdf\")",
+      "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")",
+      "Bash(file /c/Users/lucas/Desktop/VibeCoding/Resume4/portfolio/public/*)",
+      "Bash(cp \"c:/Users/lucas/Desktop/Masonry Grid/Chaptermade Shoots/\"*.JPG \"c:/Users/lucas/Desktop/VibeCoding/Resume4/portfolio/public/masonry/chaptermade/\")",
+      "Bash(cp \"c:/Users/lucas/Desktop/Masonry Grid/Chaptermade Shoots/\"*.jpg \"c:/Users/lucas/Desktop/VibeCoding/Resume4/portfolio/public/masonry/chaptermade/\")",
+      "Bash(cp \"c:/Users/lucas/Desktop/Masonry Grid/CodingWork/\"*.png \"c:/Users/lucas/Desktop/VibeCoding/Resume4/portfolio/public/masonry/coding/\")",
+      "Bash(cp \"c:/Users/lucas/Desktop/Masonry Grid/Photography/\"*.JPG \"c:/Users/lucas/Desktop/VibeCoding/Resume4/portfolio/public/masonry/photography/\")",
+      "Bash(npm run:*)",
+      "Bash(node -e \":*)",
+      "Bash(ls -la /c/Users/lucas/Desktop/VibeCoding/Resume4/portfolio/public/*.jpg /c/Users/lucas/Desktop/VibeCoding/Resume4/portfolio/public/*.png)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")",
+      "Bash(git init:*)",
+      "Bash(git branch:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

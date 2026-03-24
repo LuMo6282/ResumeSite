@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucas Moraca</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Geist:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --warm-white: #faf8f4;
+      --charcoal: #1a1a18;
+      --mid: #3a3a36;
+      --muted: #8a8880;
+      --accent: #c8a96e;
+      --accent-light: #e8d5a8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Geist', sans-serif;
+      background: var(--charcoal);
+      color: var(--cream);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 32px; height: 32px;
+      border: 1px solid rgba(200,169,110,0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease;
+    }
+    body:hover .cursor { opacity: 1; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 3rem;
+      mix-blend-mode: normal;
+    }
+
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--cream);
+      text-decoration: none;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeDown 1s ease 0.5s forwards;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.7);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      opacity: 0;
+      animation: fadeDown 1s ease calc(0.6s + var(--i) * 0.1s) forwards;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .hero-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      transform: scale(1.05);
+      animation: slowZoom 12s ease-out forwards;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(26,26,24,0.2) 0%,
+        rgba(26,26,24,0.1) 40%,
+        rgba(26,26,24,0.7) 80%,
+        rgba(26,26,24,1) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 3rem 5rem;
+      max-width: 900px;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 1s forwards;
+    }
+    .hero-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(5.5rem, 11vw, 11rem);
+      font-weight: 700;
+      line-height: 0.88;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--cream);
+      opacity: 0;
+      animation: fadeUp 1s ease 1.2s forwards;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .hero-tagline {
+      margin-top: 1.75rem;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: rgba(245,240,232,0.65);
+      max-width: 420px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.5s forwards;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      right: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeIn 1s ease 2s forwards;
+    }
+
+    .hero-scroll span {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      writing-mode: vertical-rl;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite 2.5s;
+    }
+
+    /* ── SECTION BASE ── */
+    section {
+      padding: 8rem 3rem;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .section-label::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+
+    /* ── INTRO ── */
+    .intro {
+      background: var(--charcoal);
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 6rem;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .intro-statement {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2.8rem, 4.5vw, 4.5rem);
+      font-weight: 600;
+      line-height: 1.05;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--cream);
+    }
+
+    .intro-statement em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .intro-body {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: rgba(245,240,232,0.6);
+      font-weight: 300;
+    }
+
+    .intro-body p + p {
+      margin-top: 1.25rem;
+    }
+
+    .intro-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(245,240,232,0.08);
+    }
+
+    .stat-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.4rem;
+    }
+
+    /* ── WORK ── */
+    .work-section {
+      background: var(--charcoal);
+      padding: 6rem 3rem 10rem;
+    }
+
+    .work-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+
+    .project-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 420px;
+      overflow: hidden;
+      cursor: none;
+      background: #111110;
+    }
+
+    .project-card:nth-child(even) {
+      direction: rtl;
+    }
+    .project-card:nth-child(even) > * {
+      direction: ltr;
+    }
+
+    .project-img-wrap {
+      position: relative;
+      overflow: hidden;
+      background: #1e1e1c;
+    }
+
+    .project-img-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .project-img-placeholder svg {
+      opacity: 0.06;
+    }
+
+    .project-gradient {
+      position: absolute;
+      inset: 0;
+    }
+
+    .project-info {
+      padding: 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      background: #111110;
+      transition: background 0.4s ease;
+    }
+
+    .project-card:hover .project-info {
+      background: #161614;
+    }
+
+    .project-number {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 6rem;
+      font-weight: 700;
+      color: rgba(200,169,110,0.08);
+      line-height: 1;
+      position: absolute;
+      top: 2rem;
+      right: 3rem;
+    }
+
+    .project-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+    }
+
+    .project-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2.4rem, 3.5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--cream);
+      margin-bottom: 1.25rem;
+    }
+
+    .project-desc {
+      font-size: 0.85rem;
+      line-height: 1.8;
+      color: rgba(245,240,232,0.55);
+      font-weight: 300;
+      max-width: 380px;
+      margin-bottom: 2.5rem;
+    }
+
+    .project-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stack-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid rgba(200,169,110,0.2);
+      color: var(--muted);
+      border-radius: 100px;
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-decoration: none;
+      transition: gap 0.3s ease;
+    }
+
+    .project-link:hover { gap: 1.25rem; }
+
+    .project-link .arrow {
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .project-link:hover .arrow { transform: translateX(4px); }
+
+    /* Project visual fills */
+    .proj-redline .project-gradient {
+      background: linear-gradient(135deg, #0d1f1a 0%, #0a2e24 50%, #051a12 100%);
+    }
+
+    .proj-chapter .project-gradient {
+      background: linear-gradient(135deg, #1a1508 0%, #2a2010 50%, #151008 100%);
+    }
+
+    .proj-auto .project-gradient {
+      background: linear-gradient(135deg, #0f0f18 0%, #1a1a28 50%, #0a0a12 100%);
+    }
+
+    .proj-redline .project-img-placeholder svg { opacity: 0.12; }
+
+    /* ── PHILOSOPHY ── */
+    .philosophy-section {
+      background: var(--warm-white);
+      color: var(--charcoal);
+      padding: 10rem 3rem;
+    }
+
+    .philosophy-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .philosophy-section .section-label {
+      color: #8a7a5a;
+    }
+    .philosophy-section .section-label::after {
+      background: #8a7a5a;
+    }
+
+    .philosophy-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 4rem;
+    }
+
+    .philosophy-line {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 2rem;
+      align-items: start;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .philosophy-line.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .phil-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      color: #c8a96e;
+      padding-top: 0.4rem;
+      font-weight: 300;
+    }
+
+    .phil-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2.2rem, 3.5vw, 3.5rem);
+      font-weight: 600;
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--charcoal);
+    }
+
+    .phil-text em {
+      font-style: italic;
+      color: #8a7a5a;
+    }
+
+    /* ── ABOUT / FOOTER ── */
+    .about-section {
+      background: var(--charcoal);
+      padding: 10rem 3rem;
+    }
+
+    .about-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8rem;
+      align-items: start;
+    }
+
+    .about-left h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(3.5rem, 5.5vw, 6rem);
+      font-weight: 700;
+      line-height: 0.92;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--cream);
+      margin-bottom: 2rem;
+    }
+
+    .about-left h2 em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .about-text {
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: rgba(245,240,232,0.6);
+      font-weight: 300;
+    }
+
+    .about-text p + p { margin-top: 1.25rem; }
+
+    .about-right {
+      padding-top: 1rem;
+    }
+
+    .credential-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .credential-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid rgba(245,240,232,0.06);
+    }
+
+    .cred-title {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--cream);
+    }
+
+    .cred-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+      font-weight: 300;
+    }
+
+    .cred-year {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
+
+    .contact-block {
+      margin-top: 4rem;
+      padding-top: 3rem;
+      border-top: 1px solid rgba(245,240,232,0.08);
+    }
+
+    .contact-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .contact-email {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cream);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-email:hover { color: var(--accent); }
+
+    .social-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .social-links a {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .social-links a:hover { color: var(--accent); }
+
+    /* ── FOOTER BAR ── */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid rgba(245,240,232,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer span {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes slowZoom {
+      from { transform: scale(1.05); }
+      to   { transform: scale(1); }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.1); }
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">Lucas Moraca</a>
+    <ul class="nav-links">
+      <li style="--i:0"><a href="#work">Work</a></li>
+      <li style="--i:1"><a href="#life">Life</a></li>
+      <li style="--i:2"><a href="#about">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img src="hero.png" alt="Backyard at night, Mercer Island" class="hero-img" />
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Boulder, CO · CS + Quantum Engineering</p>
+      <h1 class="hero-name">Lucas<br /><em>Moraca</em></h1>
+      <p class="hero-tagline">Builder, athlete, and photographer. Founder of Redline — an AI training platform for hybrid athletes.</p>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section style="background: var(--charcoal); padding: 8rem 3rem;">
+    <div class="intro">
+      <div>
+        <div class="section-label reveal">About</div>
+        <p class="intro-statement reveal">
+          I build things that<br /><em>matter to me,</em><br />then ship them.
+        </p>
+        <div class="intro-stats reveal">
+          <div>
+            <div class="stat-num">2</div>
+            <div class="stat-label">Companies founded</div>
+          </div>
+          <div>
+            <div class="stat-num">70.3</div>
+            <div class="stat-label">Miles, Ironman</div>
+          </div>
+          <div>
+            <div class="stat-num">∞</div>
+            <div class="stat-label">The process</div>
+          </div>
+        </div>
+      </div>
+      <div class="intro-body reveal">
+        <p>I'm a CS student at CU Boulder studying computer science with minors in quantum engineering and business. I build software, lead teams, and spend my early mornings training.</p>
+        <p>Right now I'm building Redline — an AI-powered coaching platform for hybrid athletes — and growing ChapterMade Composites, a modern fraternity photography company.</p>
+        <p>I believe in showing up consistently, staying grateful for what's already here, and building toward what's next. That's the whole thing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="work-section" id="work">
+    <div style="max-width: 1400px; margin: 0 auto 4rem;">
+      <div class="section-label reveal">Selected Work</div>
+    </div>
+    <div class="work-grid">
+
+      <!-- Redline -->
+      <div class="project-card proj-redline reveal">
+        <div class="project-img-wrap">
+          <div class="project-gradient"></div>
+          <div class="project-img-placeholder">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+              <circle cx="60" cy="60" r="50" stroke="white" stroke-width="1"/>
+              <path d="M60 30 Q80 60 60 90 Q40 60 60 30Z" stroke="white" stroke-width="1" fill="none"/>
+              <line x1="20" y1="60" x2="100" y2="60" stroke="white" stroke-width="1"/>
+            </svg>
+          </div>
+        </div>
+        <div class="project-info">
+          <div class="project-number">01</div>
+          <div class="project-tag">Founder · 2026 – Present</div>
+          <h3 class="project-title">Redline</h3>
+          <p class="project-desc">AI-powered training platform for hybrid athletes. Full backend built with Fastify/TypeScript, PostgreSQL, and Claude API integration for personalized coaching recommendations.</p>
+          <div class="project-stack">
+            <span class="stack-tag">TypeScript</span>
+            <span class="stack-tag">PostgreSQL</span>
+            <span class="stack-tag">Claude API</span>
+            <span class="stack-tag">Supabase</span>
+            <span class="stack-tag">Terra API</span>
+          </div>
+          <a href="#" class="project-link">View Project <span class="arrow">→</span></a>
+        </div>
+      </div>
+
+      <!-- ChapterMade -->
+      <div class="project-card proj-chapter reveal">
+        <div class="project-img-wrap">
+          <div class="project-gradient"></div>
+          <div class="project-img-placeholder">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+              <rect x="20" y="30" width="80" height="60" rx="2" stroke="white" stroke-width="1"/>
+              <circle cx="60" cy="60" r="18" stroke="white" stroke-width="1"/>
+              <circle cx="60" cy="60" r="8" stroke="white" stroke-width="1"/>
+              <circle cx="88" cy="38" r="4" stroke="white" stroke-width="1"/>
+            </svg>
+          </div>
+        </div>
+        <div class="project-info">
+          <div class="project-number">02</div>
+          <div class="project-tag">Co-Founder · 2026 – Present</div>
+          <h3 class="project-title">Chapter&shy;Made<br />Composites</h3>
+          <p class="project-desc">Modern fraternity composite company serving IFC chapters. Turnkey model covering photography, editing, printing, framing, and delivery. Targeting 20+ chapters in year one.</p>
+          <div class="project-stack">
+            <span class="stack-tag">Web Dev</span>
+            <span class="stack-tag">Vercel</span>
+            <span class="stack-tag">Operations</span>
+            <span class="stack-tag">BD</span>
+          </div>
+          <a href="#" class="project-link">View Project <span class="arrow">→</span></a>
+        </div>
+      </div>
+
+      <!-- L&L -->
+      <div class="project-card proj-auto reveal">
+        <div class="project-img-wrap">
+          <div class="project-gradient"></div>
+          <div class="project-img-placeholder">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+              <ellipse cx="60" cy="70" rx="40" ry="20" stroke="white" stroke-width="1"/>
+              <path d="M30 70 Q35 45 60 42 Q85 45 90 70" stroke="white" stroke-width="1" fill="none"/>
+              <circle cx="38" cy="72" r="10" stroke="white" stroke-width="1"/>
+              <circle cx="82" cy="72" r="10" stroke="white" stroke-width="1"/>
+            </svg>
+          </div>
+        </div>
+        <div class="project-info">
+          <div class="project-number">03</div>
+          <div class="project-tag">Co-Owner · 2024 – Present</div>
+          <h3 class="project-title">L&L Auto<br />Spa</h3>
+          <p class="project-desc">Seasonal auto detailing business generating $10K+ in revenue. Managed client acquisition, scheduling, invoicing, and local marketing from the ground up at 19.</p>
+          <div class="project-stack">
+            <span class="stack-tag">Operations</span>
+            <span class="stack-tag">Marketing</span>
+            <span class="stack-tag">Bookkeeping</span>
+          </div>
+          <a href="#" class="project-link">View Details <span class="arrow">→</span></a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy-section" id="life">
+    <div class="philosophy-inner">
+      <div class="section-label">Philosophy</div>
+      <div class="philosophy-lines">
+        <div class="philosophy-line">
+          <span class="phil-num">I</span>
+          <p class="phil-text">Grateful for where I am.<br /><em>Relentless about where I'm going.</em></p>
+        </div>
+        <div class="philosophy-line">
+          <span class="phil-num">II</span>
+          <p class="phil-text"><em>Consistency over intensity.</em><br />Show up. Let it compound.</p>
+        </div>
+        <div class="philosophy-line">
+          <span class="phil-num">III</span>
+          <p class="phil-text">The process <em>is</em> the point.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT / CREDENTIALS -->
+  <section class="about-section" id="about">
+    <div class="about-inner">
+      <div class="about-left">
+        <h2 class="reveal">The rest<br />of the<br /><em>story.</em></h2>
+        <div class="about-text reveal">
+          <p>CS student at CU Boulder with minors in quantum engineering and business. Currently in my fourth semester, building two companies, coaching CrossFit, and shooting whatever stops me.</p>
+          <p>In September 2025 I finished Ironman 70.3 Boulder. That one was personal.</p>
+          <p>Originally from Mercer Island, WA. Planning on working remotely and traveling — starting with Southeast Asia after graduation.</p>
+        </div>
+      </div>
+      <div class="about-right reveal">
+        <ul class="credential-list">
+          <li class="credential-item">
+            <div>
+              <div class="cred-title">University of Colorado Boulder</div>
+              <div class="cred-sub">B.S. Computer Science · Quantum Engineering + Business minors</div>
+            </div>
+            <span class="cred-year">2023–</span>
+          </li>
+          <li class="credential-item">
+            <div>
+              <div class="cred-title">CrossFit L1 Trainer</div>
+              <div class="cred-sub">Coaching functional fitness at CU Boulder</div>
+            </div>
+            <span class="cred-year">2026</span>
+          </li>
+          <li class="credential-item">
+            <div>
+              <div class="cred-title">Ironman 70.3 Boulder</div>
+              <div class="cred-sub">Finisher</div>
+            </div>
+            <span class="cred-year">2025</span>
+          </li>
+          <li class="credential-item">
+            <div>
+              <div class="cred-title">New Member Educator</div>
+              <div class="cred-sub">Theta Xi Fraternity · Alpha Eta Chapter</div>
+            </div>
+            <span class="cred-year">2025–</span>
+          </li>
+        </ul>
+
+        <div class="contact-block">
+          <div class="contact-label">Get in touch</div>
+          <a href="mailto:lucas@example.com" class="contact-email">lucas@example.com</a>
+          <div class="social-links">
+            <a href="#">LinkedIn</a>
+            <a href="#">GitHub</a>
+            <a href="#">Instagram</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2026 Lucas Moraca</span>
+    <span>Boulder, CO</span>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '14px';
+        cursor.style.height = '14px';
+        ring.style.width = '48px';
+        ring.style.height = '48px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '8px';
+        cursor.style.height = '8px';
+        ring.style.width = '32px';
+        ring.style.height = '32px';
+      });
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal, .philosophy-line');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
